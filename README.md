@@ -22,15 +22,25 @@ There are several different flags that are used in TCP, including:
 
 These flags are used in combination to control the flow of data between two devices in a TCP connection. For example, when a new connection is established, the SYN flag is set in the first packet, and the ACK flag is set in the second packet. When data is being transmitted, the ACK flag is set in each packet to acknowledge the receipt of the data. When the connection is closed, the FIN flag is set in the last packet.
 
-## Here's a step-by-step explanation of the TCP connection termination process:
-In a Transmission Control Protocol (TCP) connection, the FIN (Finish) flag is used to indicate that a party wants to close the connection. The process of closing a TCP connection is called the TCP Connection Termination, and it involves a series of steps that both the sender and receiver follow to gracefully close the connection.
+## TCP connection work flow:
+the SYN-SYN-ACK process. This process establishes a reliable and secure connection between the two devices. The steps involved in the three-way handshake are as follows:
 
-Closing the sending side: The first step in closing a TCP connection is initiated by the sender, who sets the FIN flag in the TCP header of a packet to indicate that it has no more data to send. The FIN packet is then sent to the receiver.
+Device A sends a packet with the SYN (Synchronize) flag set to initiate a connection with Device B.
 
-Reception of FIN by the receiver: When the receiver receives the FIN packet, it sends an acknowledgment (ACK) to the sender, indicating that it has received the FIN. The receiver then stops accepting new data from the sender and enters a TIME_WAIT state.
+Device B receives the packet and responds with a packet that has both the SYN and ACK (Acknowledgment) flags set, acknowledging the receipt of the SYN packet and requesting to start a connection with Device A.
 
-Last ACK from the receiver: After entering the TIME_WAIT state, the receiver waits for a specified amount of time to ensure that any remaining packets in the network have been delivered. If the receiver does not receive any more data from the sender during this time, it sends a final ACK to the sender to acknowledge the receipt of the FIN.
+Device A receives the packet with the SYN and ACK flags set and sends a packet with only the ACK flag set, acknowledging the receipt of the SYN-ACK packet and completing the three-way handshake.
 
-Closing the receiving side: After receiving the final ACK from the receiver, the sender can close its end of the connection.
+Once the three-way handshake is completed, data can be transmitted between the two devices over the established TCP connection.
 
-End of the connection: After both sides have closed their ends of the connection, the TCP connection is terminated.
+A TCP connection ends with a four-way handshake between the two devices, also known as the FIN-ACK process. This process terminates the connection in a orderly and reliable manner. The steps involved in the four-way handshake are as follows:
+
+Device A sends a packet with the FIN (Finish) flag set to indicate that it wants to close the connection.
+
+Device B receives the packet with the FIN flag set and sends a packet with the ACK flag set to acknowledge the receipt of the FIN packet.
+
+Device B then sends a packet with the FIN flag set to indicate that it also wants to close the connection.
+
+Device A receives the packet with the FIN flag set and sends a packet with the ACK flag set to acknowledge the receipt of the FIN packet and complete the four-way handshake.
+
+The FIN-ACK process ensures that all data is transmitted and acknowledged before the connection is terminated, avoiding any data loss or corruption during the termination process.
