@@ -8,17 +8,17 @@ TCP (Transmission Control Protocol) uses flags to control the flow of data betwe
 
 There are several different flags that are used in TCP, including:
 
-SYN (Synchronize): This flag is used to initiate a new TCP connection. When the SYN flag is set in a packet, it indicates that the sender is requesting to start a new connection.
+* SYN (Synchronize): This flag is used to initiate a new TCP connection. When the SYN flag is set in a packet, it indicates that the sender is requesting to start a new connection.
 
-ACK (Acknowledgment): This flag is used to acknowledge the receipt of data packets. When the ACK flag is set in a packet, it indicates that the receiver has received the data and is sending an acknowledgment back to the sender.
+* ACK (Acknowledgment): This flag is used to acknowledge the receipt of data packets. When the ACK flag is set in a packet, it indicates that the receiver has received the data and is sending an acknowledgment back to the sender.
 
-FIN (Finish): This flag is used to end an existing TCP connection. When the FIN flag is set in a packet, it indicates that the sender is finished sending data and wants to close the connection.
+* FIN (Finish): This flag is used to end an existing TCP connection. When the FIN flag is set in a packet, it indicates that the sender is finished sending data and wants to close the connection.
 
-RST (Reset): This flag is used to reset an existing TCP connection. When the RST flag is set in a packet, it indicates that there has been an error in the connection and that it needs to be reset.
+* RST (Reset): This flag is used to reset an existing TCP connection. When the RST flag is set in a packet, it indicates that there has been an error in the connection and that it needs to be reset.
 
-PSH (Push): This flag is used to push data to the receiving device as soon as possible, rather than waiting for the buffer to fill up. When the PSH flag is set in a packet, it indicates that the sender wants the data to be delivered to the receiver immediately.
+* PSH (Push): This flag is used to push data to the receiving device as soon as possible, rather than waiting for the buffer to fill up. When the PSH flag is set in a packet, it indicates that the sender wants the data to be delivered to the receiver immediately.
 
-URG (Urgent): This flag is used to indicate that a data packet contains urgent data. When the URG flag is set in a packet, it indicates that the receiver should process this data before other data that may be in its buffer.
+* URG (Urgent): This flag is used to indicate that a data packet contains urgent data. When the URG flag is set in a packet, it indicates that the receiver should process this data before other data that may be in its buffer.
 
 These flags are used in combination to control the flow of data between two devices in a TCP connection. For example, when a new connection is established, the SYN flag is set in the first packet, and the ACK flag is set in the second packet. When data is being transmitted, the ACK flag is set in each packet to acknowledge the receipt of the data. When the connection is closed, the FIN flag is set in the last packet.
 
