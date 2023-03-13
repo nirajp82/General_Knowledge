@@ -13,4 +13,4 @@ https://itnext.io/the-outbox-pattern-in-event-driven-asp-net-core-microservice-a
 
 # AWS Cheat Sheets
 https://digitalcloud.training/aws-cheat-sheets/
-
+https://www.knowledgehut.com/tutorials/aws/aws-api-gateway
