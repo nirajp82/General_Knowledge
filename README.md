@@ -1,5 +1,6 @@
 ### Microsoft learn code samples
   * https://learn.microsoft.com/en-us/samples/browse/
+  * https://github.com/Azure-Samples
   
 ### AWS Cheat Sheets
   * https://digitalcloud.training/aws-cheat-sheets/
