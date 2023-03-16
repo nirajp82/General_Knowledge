@@ -1,3 +1,6 @@
+### Microsoft learn code samples
+  * https://learn.microsoft.com/en-us/samples/browse/
+  
 ### AWS Cheat Sheets
   * https://digitalcloud.training/aws-cheat-sheets/
   * https://www.knowledgehut.com/tutorials/aws/aws-api-gateway
