@@ -1,5 +1,3 @@
-Certainly! Let's dive into detailed steps explaining SailPoint IdentityNow, its features, how to use it as an Identity Governance and Administration (IGA) solution, and how it works with an example scenario.
-
 ### 1. What is SailPoint IdentityNow?
 
 SailPoint IdentityNow is a cloud-based Identity Governance and Administration (IGA) solution designed to manage user access to applications, systems, and data within an organization. It provides centralized visibility and control over user identities, access requests, certifications, and compliance requirements.
