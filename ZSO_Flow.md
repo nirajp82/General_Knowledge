@@ -202,7 +202,13 @@ It's crucial to understand the difference between these two types of certificate
 
 ### 3.5 Requesting Client Certificates: NGINX Configuration
 
-To enable ZSO, your NGINX `server` block must be configured to request client certificates.
+Certainly! Here’s a **rewritten, clear, and detailed explanation** of the NGINX configuration needed to request client certificates for Zero Sign-On (ZSO), along with a line-by-line breakdown of what each directive does and why it matters:
+
+---
+
+# 3.5 Requesting Client Certificates: NGINX Configuration for ZSO
+- To enable ZSO, your NGINX `server` block must be configured to request client certificates.
+- In other words, To enable Zero Sign-On (ZSO) using mutual TLS (mTLS), your NGINX server block must be configured to **request and validate client certificates during the TLS handshake**. This allows NGINX to authenticate users based on their client certificates issued by trusted Certificate Authorities (CAs).
 
 ```nginx
 server {
@@ -212,20 +218,90 @@ server {
     ssl_certificate /etc/nginx/certs/wildcard.my.env.example.com.crt;
     ssl_certificate_key /etc/nginx/private/wildcard.my.env.example.com.key;
 
-    ssl_verify_client optional_no_ca; # Asks for a cert, but doesn't fail if not provided
-    ssl_client_certificate /etc/nginx/ca/tenant-ca-bundle.crt; # The multi-tenant CA bundle
-    ssl_verify_depth 3; # Max depth of client certificate chain to verify (e.g., leaf + intermediate + root)
+    ssl_verify_client optional_no_ca;               # Request client certs but allow fallback
+    ssl_client_certificate /etc/nginx/ca/tenant-ca-bundle.crt;  # Trusted multi-tenant CA bundle
+    ssl_verify_depth 3;                              # Max depth of client cert chain to verify
 }
 ```
 
-  * `ssl_verify_client optional_no_ca`: This directive instructs NGINX to *request* a client certificate.
-      * If the client presents a certificate, NGINX will attempt to validate it.
-      * If the client does *not* present a certificate, or if the presented certificate cannot be validated against the trusted CAs, the TLS handshake *will not terminate*. This is important for graceful fallback (e.g., to username/password login for users without a client cert).
-      * Other options: `on` (handshake fails if no valid cert), `off` (no cert requested).
-  * `ssl_client_certificate /etc/nginx/ca/tenant-ca-bundle.crt;`: This is the most critical line for multi-tenant ZSO. It points to a file containing a concatenated list of all trusted Certificate Authority (CA) certificates for all your tenants. NGINX uses these CAs to:
-    1.  Generate the list of "acceptable issuers" to send in the `CertificateRequest` message to the client.
-    2.  Validate any client certificate presented by the browser.
-  * `ssl_verify_depth 3;`: Defines the maximum verification depth for the client certificate chain. For example, a depth of 3 allows for a client leaf certificate, an intermediate CA, and a root CA.
+---
+
+### Explanation of each line:
+
+#### `listen 443 ssl;`
+
+* Configures NGINX to listen on port 443 with SSL/TLS enabled.
+* TLS is mandatory for client certificate authentication (mTLS).
+* Without TLS, client certificates cannot be exchanged.
+
+---
+
+#### `server_name *.my.env.example.com;`
+
+* Accepts HTTPS requests for any subdomain under `my.env.example.com`.
+* Supports multi-tenant setup where each tenant uses their own subdomain.
+
+---
+
+#### `ssl_certificate /etc/nginx/certs/wildcard.my.env.example.com.crt;`
+
+#### `ssl_certificate_key /etc/nginx/private/wildcard.my.env.example.com.key;`
+
+* Specifies the **server’s TLS certificate and private key**.
+* These identify the server during the TLS handshake and establish a secure channel.
+* Essential foundation — without these, TLS (and thus mTLS) cannot happen.
+
+---
+
+#### `ssl_verify_client optional_no_ca;`
+
+* Requests a client certificate from the browser during the TLS handshake.
+* `optional_no_ca` means:
+
+  * If the client **provides** a valid certificate issued by a trusted CA, NGINX will authenticate it.
+  * If the client **does not provide** a certificate, the handshake **still succeeds** (does not fail).
+  * If the client provides an **invalid or untrusted** certificate, handshake still succeeds.
+* This setting enables **graceful fallback** to other authentication methods (e.g., username/password) for clients without certs.
+* Other options:
+
+  * `on` — require a valid client certificate, handshake fails without one.
+  * `off` — do not request a client certificate at all.
+
+---
+
+#### `ssl_client_certificate /etc/nginx/ca/tenant-ca-bundle.crt;`
+
+* Points to a file containing a **concatenated list of trusted CA certificates** for all tenants.
+* NGINX uses this CA bundle to:
+
+  * **Send the list of trusted CAs** to clients during TLS handshake (CertificateRequest message).
+  * **Validate the client certificate** presented by the browser against these trusted CAs.
+* Crucial for multi-tenant ZSO, allowing a single NGINX instance to trust client certs issued by different tenant-specific CAs.
+
+---
+
+#### `ssl_verify_depth 3;`
+
+* Defines the **maximum allowed depth** of the client certificate chain during verification.
+* For example, depth of 3 supports:
+
+  * Leaf client certificate (depth 0)
+  * Intermediate CA (depth 1)
+  * Root CA (depth 2)
+* Setting this ensures NGINX can verify certificates with multiple intermediate CAs.
+
+---
+
+# Summary
+
+This NGINX configuration enables the server to:
+
+* Establish a **secure TLS connection** using its own certificate.
+* **Request client certificates** during the TLS handshake but not reject clients lacking certs.
+* **Validate client certificates** against a multi-tenant CA bundle.
+* Allow **fallback authentication** when no valid client cert is presented.
+
+This setup is foundational for implementing **Zero Sign-On (ZSO) using mTLS** in multi-tenant environments.
 
 ### 3.6 `CertificateRequest` Phase
 
