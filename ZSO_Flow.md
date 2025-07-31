@@ -1,3 +1,9 @@
+Yes, please combine both troubleshooting and a detailed TLS handshake diagram into a developer's deep-dive playbook. This will be an excellent addition to the comprehensive ZSO document.
+
+Here's the expanded document, incorporating both requests.
+
+-----
+
 # Zero Sign-On (ZSO) in a Multi-Tenant Reverse Proxy Setup: Complete Deep Dive
 
 This document is designed for engineers and architects who need to implement and troubleshoot ZSO in a multi-tenant environment. We will cover everything step by step, without skipping any details, including:
@@ -9,7 +15,7 @@ This document is designed for engineers and architects who need to implement and
   * Multi-tenant CA bundle files: why and how
   * How backend services consume client certificates for ZSO
   * Edge cases, security considerations, and examples
-  * Troubleshooting Guide: A Developer's Deep-Dive Playbook
+  * **Troubleshooting Guide: A Developer's Deep-Dive Playbook**
 
 ## 1\. What is Zero Sign-On (ZSO)?
 
@@ -182,11 +188,11 @@ NGINX receives the `ClientHello` and processes it.
 It's crucial to understand the difference between these two types of certificates in the TLS handshake:
 
   * **Server certificate:**
-      * **Direction:** NGINX → Browser
+      * **Direction:** NGINX $\\rightarrow$ Browser
       * **Purpose:** Proves the identity of the server to the client.
       * **Source:** Configured via `ssl_certificate` and `ssl_certificate_key` in NGINX.
   * **Client certificate:**
-      * **Direction:** Browser → NGINX
+      * **Direction:** Browser $\\rightarrow$ NGINX
       * **Purpose:** Proves the identity of the client (user or device) to the server. This is the core of ZSO.
       * **Triggered by:** `ssl_verify_client` directive in NGINX.
 
@@ -556,7 +562,7 @@ graph TD
 **Q: What if the user has no client certificate, or an invalid one?**
 **A:**
 
-  * **With `ssl_verify_client optional_no_ca`:** The TLS handshake will still succeed. NGINX will set the `$ssl_client_verify` variable to `NONE` (no cert provided) or `FAILED` (cert provided but invalid). The backend application will receive this header and can then implement a fallback mechanism, such as redirecting to a traditional username/password login page, or providing a message that ZSO failed.
+  * **With `ssl_verify_client optional_no_ca`:** The TLS handshake will still succeed. NGINX will set the `$ssl_client_verify` variable to `FAILED` (or an empty string if no cert was presented). The backend application will receive this header and can then implement a fallback mechanism, such as redirecting to a traditional username/password login page, or providing a message that ZSO failed.
   * **With `ssl_verify_client on`:** The TLS handshake will fail immediately if no valid client certificate is presented. This is a stricter mode often used in environments where client certificates are mandatory for *all* access.
 
 **Q: How does ZSO differ from MFA?**
@@ -700,4 +706,3 @@ If `$ssl_client_verify` is `SUCCESS` in NGINX logs, but the backend isn't authen
   * **Identity Mapping Logic:** Is the backend correctly extracting the Subject DN, SAN, serial number, or thumbprint from the client certificate? Is its lookup logic against the user database correct? Does the extracted value match what's in your identity store?
 
 By systematically going through these steps, from NGINX configuration to client-side behavior and backend processing, you can pinpoint the exact stage where the ZSO flow is failing.
-
