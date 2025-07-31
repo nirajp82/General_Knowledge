@@ -202,11 +202,6 @@ It's crucial to understand the difference between these two types of certificate
 
 ### 3.5 Requesting Client Certificates: NGINX Configuration
 
-Certainly! Here’s a **rewritten, clear, and detailed explanation** of the NGINX configuration needed to request client certificates for Zero Sign-On (ZSO), along with a line-by-line breakdown of what each directive does and why it matters:
-
----
-
-# 3.5 Requesting Client Certificates: NGINX Configuration for ZSO
 - To enable ZSO, your NGINX `server` block must be configured to request client certificates.
 - In other words, To enable Zero Sign-On (ZSO) using mutual TLS (mTLS), your NGINX server block must be configured to **request and validate client certificates during the TLS handshake**. This allows NGINX to authenticate users based on their client certificates issued by trusted Certificate Authorities (CAs).
 
