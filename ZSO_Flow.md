@@ -285,9 +285,7 @@ server {
   * Root CA (depth 2)
 * Setting this ensures NGINX can verify certificates with multiple intermediate CAs.
 
----
-
-# Summary
+#### Summary
 
 This NGINX configuration enables the server to:
 
