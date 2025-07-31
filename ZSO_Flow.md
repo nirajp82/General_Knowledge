@@ -87,7 +87,9 @@ graph TD
 Once the browser has the IP address (e.g., `192.0.2.10`), it initiates a TCP connection on port `443` (the standard port for HTTPS).
 
   * The browser opens a TCP connection to the IP of the load balancer on port `443`.
-  * If using AWS, a Network Load Balancer (NLB) simply forwards packets to NGINX. Crucially, an NLB does *not* terminate TLS; it's a pass-through. This means NGINX sees the raw TLS traffic.
+  * If using AWS, a Network Load Balancer (NLB) simply forwards packets to NGINX. Crucially, an NLB does *not* terminate TLS; it's a pass-through. This means NGINX sees the raw TLS traffic. NLB = Layer 4, raw speed, static IP, protocol-agnostic
+
+
 
 ### 3.3 TLS Handshake (Critical for ZSO)
 
