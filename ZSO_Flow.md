@@ -583,51 +583,62 @@ public class DataController : ControllerBase
   * **Certificate Revocation:** Implement robust Certificate Revocation List (CRL) or Online Certificate Status Protocol (OCSP) checking in NGINX or the backend. This is crucial for immediately invalidating compromised or lost client certificates. Without revocation checks, a compromised certificate could grant access until its expiration.
 
 ## 7\. Example End-to-End Flow Diagram
-
 This diagram visualizes the entire journey of a ZSO request.
-
-```mermaid
-graph TD
-    subgraph Client
-        A[User Device: Browser, Client Cert + Key]
-    end
-
-    subgraph Network Layer
-        B[DNS Resolution] --> C[Load Balancer (AWS NLB - Pass-through)]
-    end
-
-    subgraph Reverse Proxy (NGINX)
-        D{NGINX Server}
-        D -- SNI: tenantA.my.env.example.com --> E[NGINX Server Block Selection]
-        E -- Configured with ssl_client_certificate --> F[Multi-Tenant CA Bundle]
-        F -- List of Acceptable CAs --> G[TLS Handshake: CertificateRequest]
-        G -- Server Cert + Request for Client Cert --> A
-        A -- Client Cert + Proof of Key Possession --> D
-        D -- Validates Client Cert against CA Bundle --> H{Client Cert Verified?}
-    end
-
-    subgraph Backend Application
-        I[Backend Service (.NET, Java, etc.)]
-    end
-
-    A -- HTTPs Request --> C
-    C -- Forwards Raw TCP --> D
-    H -- YES (Client Cert Valid) --> J[NGINX adds Headers: X-Client-Cert, X-Client-Verify=SUCCESS, etc.]
-    J --> I
-    I -- Decodes & Parses Client Cert --> K[Backend validates Cert + maps to User/Device Identity]
-    K -- ZSO Success! --> L[Access Granted to Application]
-
-    H -- NO (Client Cert Invalid/Missing) --> M[NGINX adds Headers: X-Client-Cert=empty, X-Client-Verify=FAILED, etc.]
-    M --> I
-    I -- Backend detects no valid ZSO --> N[Fallback to Traditional Login / Deny Access]
-
-    style C fill:#f9f,stroke:#333,stroke-width:2px
-    style D fill:#f9f,stroke:#333,stroke-width:2px
-    style I fill:#f9f,stroke:#333,stroke-width:2px
-    style K fill:#ccf,stroke:#333,stroke-width:2px
-    style L fill:#9f9,stroke:#333,stroke-width:2px
-    style N fill:#f99,stroke:#333,stroke-width:2px
 ```
+[Client: Browser with Client Cert + Private Key]
+          |
+          | HTTPS Request (tenantA.my.env.example.com)
+          v
+[DNS Resolution]
+          |
+          v
+[AWS NLB (TCP pass-through)]
+          |
+          | Raw TCP Forwarded (no TLS termination)
+          v
+[NGINX Reverse Proxy]
+          |
+          |-- Uses SNI to select server block
+          |-- Loads ssl_client_certificate (multi-tenant CA bundle)
+          |-- Sends TLS CertificateRequest (acceptable CA DNs)
+          |
+          v
+[Client Receives CertificateRequest]
+          |
+          |-- Sends client certificate chain (leaf + intermediates)
+          |-- Sends proof-of-possession (signs handshake data with private key)
+          v
+[NGINX Validates Client Cert]
+          |
+         / \
+        /   \
+   Valid       Invalid or Missing
+     |                  |
+     |                  |
+[Sets NGINX Variables:] [Sets NGINX Variables:]
+ - $ssl_client_verify=SUCCESS   - $ssl_client_verify=FAILED
+ - $ssl_client_s_dn             - (or NONE if no cert)
+ - $ssl_client_cert             - $ssl_client_cert (empty)
+     |                  |
+     |                  |
+[Adds headers to backend:] [Adds headers to backend:]
+ - X-Client-Verify       - X-Client-Verify
+ - X-Client-Cert         - X-Client-Cert=empty
+ - X-Client-DN           - X-Client-DN (optional)
+     |                  |
+     v                  v
+[Backend Service]   [Backend Service]
+     |                  |
+     |                  |
+[Parses cert, maps  [Detects no valid ZSO]
+ tenant & identity]
+     |                  |
+     v                  v
+[ZSO success –     [Fallback login or
+ access granted]     deny access]
+```
+
+
 
 ## 8\. FAQs
 
