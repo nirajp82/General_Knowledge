@@ -298,7 +298,22 @@ This setup is foundational for implementing **Zero Sign-On (ZSO) using mTLS** in
 
 ### 3.6 `CertificateRequest` Phase
 
-When NGINX sends the `CertificateRequest` message, it includes a list of "acceptable CA distinguished names" (DNs). These are the subject DNs of the CAs whose certificates are present in the `ssl_client_certificate` bundle file.
+When NGINX sends the **CertificateRequest** message during the TLS handshake, it tells the client which Certificate Authorities (CAs) it **trusts for client certificates**. It does this by sending a list of **acceptable CA distinguished names (DNs)**.
+These DNs come from the **subject fields** of the CA certificates listed in the `ssl_client_certificate` file.
+
+#### Example:
+If your `tenant-ca-bundle.crt` contains two CA certs with these subjects:
+```
+Subject: CN=TenantA Root CA, O=TenantA Org, C=US
+Subject: CN=TenantB Root CA, O=TenantB Org, C=US
+```
+Then NGINX will tell the client:
+> "Please send me a client certificate issued by one of these CAs:
+>
+> * TenantA Root CA
+> * TenantB Root CA"
+#### Why?
+This helps the client pick the **right client certificate** to present for authentication.
 
 The browser then inspects its local certificate store (e.g., Windows Certificate Manager, macOS Keychain, browser's own store):
 
