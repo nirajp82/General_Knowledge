@@ -72,7 +72,7 @@ dev-lb.elb.us-west-2.amazonaws.com A 192.0.2.10
 
 ```mermaid
 graph TD
-    A[User enters https://tenantA.my.env.example.com] --> B{DNS Resolver};
+    A[User enters https ://tenantA.my.env.example.com] --> B{DNS Resolver}
     B --> C{DNS Query for tenantA.my.env.example.com};
     C --> D[DNS Server];
     D -- CNAME cluster23.env.example.com --> E{DNS Query for cluster23.env.example.com};
