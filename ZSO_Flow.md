@@ -693,7 +693,9 @@ NGINX access and error logs are invaluable.
                          'ssl_client_s_dn:"$ssl_client_s_dn" '
                          'ssl_client_i_dn:"$ssl_client_i_dn"';
     access_log /var/log/nginx/access.log custom_zso;
+    
     ```
+
     Look for lines where `ssl_client_verify` is not `SUCCESS`. Common values:
       * `NONE`: Client did not present any certificate. (Expected if `optional_no_ca` and user has no cert)
       * `FAILED`: Client presented a cert, but it failed NGINX validation (e.g., untrusted issuer, expired, revoked, malformed).
